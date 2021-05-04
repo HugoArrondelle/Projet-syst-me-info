@@ -22,7 +22,7 @@ architecture Behavioral of processor is
     component alu is
         Port (  A       : in STD_LOGIC_VECTOR (7 downto 0);
                 B       : in STD_LOGIC_VECTOR (7 downto 0);
-                Out     : out STD_LOGIC_VECTOR (7 downto 0);
+                Out_alu : out STD_LOGIC_VECTOR (7 downto 0);
                 OP      : in STD_LOGIC_VECTOR (1 downto 0);
                 N       : out STD_LOGIC;
                 O       : out STD_LOGIC;
@@ -36,14 +36,15 @@ architecture Behavioral of processor is
     
     component pipeline is
         Port (  CLK     : in  STD_LOGIC;
-                A_in    :  in  STD_LOGIC_VECTOR (7 downto 0);
+                A_in    : in  STD_LOGIC_VECTOR (7 downto 0);
                 OP_in   : in  STD_LOGIC_VECTOR (3 downto 0);
                 B_in    : in  STD_LOGIC_VECTOR (7 downto 0);
                 C_in    : in  STD_LOGIC_VECTOR (7 downto 0);
                 A_out   : out  STD_LOGIC_VECTOR (7 downto 0);
                 OP_out  : out  STD_LOGIC_VECTOR (3 downto 0);
                 B_out   : out  STD_LOGIC_VECTOR (7 downto 0);
-                C_out   : out  STD_LOGIC_VECTOR (7 downto 0));
+                C_out   : out  STD_LOGIC_VECTOR (7 downto 0)
+				 );
     end component;
     
 
@@ -68,13 +69,13 @@ architecture Behavioral of processor is
     ------------------------------------------------------
     
     
-    component memory is
+    component data_memory is
        Port (   addr    : in  STD_LOGIC_VECTOR (7 downto 0);
-                IN      : in  STD_LOGIC_VECTOR (7 downto 0);
+                IN_mem  : in  STD_LOGIC_VECTOR (7 downto 0);
                 RW      : in  STD_LOGIC;
                 RST     : in  STD_LOGIC;
                 CLK     : in  STD_LOGIC;
-                OUT     : out  STD_LOGIC_VECTOR (7 downto 0));
+                OUT_mem : out  STD_LOGIC_VECTOR (7 downto 0));
     end component;
     
     ------------------------------------------------------
@@ -84,8 +85,8 @@ architecture Behavioral of processor is
     
     component instr_memory is
     
-        Port (  addr    : in  STD_LOGIC_VECTOR (7 downto 0);
-                CLK     : in  STD_LOGIC;
+        Port (  addr    		  : in  STD_LOGIC_VECTOR (7 downto 0);
+                CLK    			  : in  STD_LOGIC;
                 OUT_instruction : out  STD_LOGIC_VECTOR (31 downto 0));
     end component;
     
@@ -133,12 +134,12 @@ architecture Behavioral of processor is
     signal Ctrl_alu_Aux :                                           STD_LOGIC_VECTOR(3 downto 0);
     
     
-    
+  begin  
     --au RST et au debut mettre IP a 0
     Instr_Mem : instr_memory PORT MAP   (
                                             addr =>         IP,
-                                            CLK =>          CLK_PROC,
-                                            instr_OUT =>    Instruction
+														  CLK =>          CLK_PROC,
+                                            OUT_instruction =>    Instruction
                                         );
         
 
@@ -219,8 +220,8 @@ architecture Behavioral of processor is
     -- REGISTRE --
     ------------------------------------------------------
     Reg : registre PORT MAP(
-                                    A=>         B_DI(3 downto 0),
-                                    B=>         C_DI(3 downto 0),
+                                    addrA=>     B_DI(3 downto 0),
+                                    addrB=>     C_DI(3 downto 0),
                                     addrW =>    A_RE(3 downto 0),
                                     W=>         LC_out,
                                     DATA=>      B_RE,
@@ -241,7 +242,7 @@ architecture Behavioral of processor is
                                     A=>         B_DI,
                                     B=>         Reg_QA,
                                     OP=>        OP_DI,
-                                    S=>         Mux_BdR_Out
+                                    OUT_mux=>   Mux_BdR_Out
              );
              
     ------------------------------------------------------
@@ -254,7 +255,7 @@ architecture Behavioral of processor is
                                     A=>         B_EX,
                                     B=>         UAL_OUT,
                                     OP=>        OP_EX,
-                                    S=>         Mux_UAL_Out
+                                    OUT_mux=>   Mux_UAL_Out
     );
     
     ------------------------------------------------------
@@ -264,12 +265,11 @@ architecture Behavioral of processor is
     UAL : ALU PORT MAP(
                                     A =>        B_EX,
                                     B =>        C_EX,
-                                    S =>        UAL_OUT,
-                                    Ctrl_Alu => Ctrl_alu_Aux,
-                                    C_Flag =>   UAL_C_Flag,
-                                    Z_Flag =>   UAL_Z_Flag,
-                                    O_Flag =>   UAL_O_Flag,
-                                    N_Flag =>   UAL_N_Flag
+                                    Out_alu =>  UAL_OUT,
+                                    OP =>       Ctrl_alu_Aux,
+                                    C =>   		UAL_C_Flag,
+                                    O =>   		UAL_O_Flag,
+                                    N =>   		UAL_N_Flag
     );
     
     
@@ -279,13 +279,13 @@ architecture Behavioral of processor is
     -- Data_MEM --
     ------------------------------------------------------
     
-    Data_MEM : memory Port MAP(
+    Data_MEM : data_memory Port MAP(
                                     addr =>     Mux_MEM2_Out,
-                                    v_IN  =>    B_MEM,
+                                    IN_mem  =>  B_MEM,
                                     RW =>       LC_MEM_out,
                                     RST =>      RST_PROC,
                                     CLK =>      CLK_PROC,
-                                    v_OUT =>    DATA_MEM_OUT
+                                    OUT_mem =>  DATA_MEM_OUT
     );
      
     ------------------------------------------------------
@@ -298,7 +298,7 @@ architecture Behavioral of processor is
                                     A=>         DATA_MEM_OUT,
                                     B=>         B_MEM,
                                     OP=>        OP_MEM,
-                                    S=>         Mux_MEM1_Out
+                                    OUT_mux=>   Mux_MEM1_Out
     );
     
     ------------------------------------------------------
@@ -320,7 +320,7 @@ architecture Behavioral of processor is
                                     A=>         A_MEM,
                                     B=>         B_MEM,
                                     OP=>        OP_MEM,
-                                    S=>         Mux_MEM2_Out
+                                    OUT_mux=>   Mux_MEM2_Out
     );
     
     

@@ -5,13 +5,13 @@ use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity alu is 
-    Port (A     : in STD_LOGIC_VECTOR (7 downto 0);
-          B     : in STD_LOGIC_VECTOR (7 downto 0);
-          Out   : out STD_LOGIC_VECTOR (7 downto 0);
-          OP    : in STD_LOGIC_VECTOR (1 downto 0);
-          N     : out STD_LOGIC;
-          O     : out STD_LOGIC;
-          C     : out STD_LOGIC
+    Port (A     	: in STD_LOGIC_VECTOR (7 downto 0);
+          B     	: in STD_LOGIC_VECTOR (7 downto 0);
+          Out_alu : out STD_LOGIC_VECTOR (7 downto 0);
+          OP    	: in STD_LOGIC_VECTOR (1 downto 0);
+          N    	: out STD_LOGIC;
+          O     	: out STD_LOGIC;
+          C     	: out STD_LOGIC
          );
 end alu;
 
@@ -24,12 +24,12 @@ architecture Behavioral of alu is
     signal S_mul_aux :  STD_LOGIC_VECTOR (15 downto 0);
     signal S_mul :      STD_LOGIC_VECTOR (7 downto 0);
     signal S_div :      STD_LOGIC_VECTOR (7 downto 0);
+	 signal S_mul_ov : STD_LOGIC_VECTOR (15 downto 7);
 	
     -- signaux auxiliaires (on ne peut pas recuperer la valeurs d'un out)
     signal Out_aux :   STD_LOGIC_VECTOR (7 downto 0);
     signal N_aux :      STD_LOGIC;
     signal O_aux :      STD_LOGIC;
-    signal Z_aux :      STD_LOGIC;
     signal C_aux :      STD_LOGIC;
 
 
@@ -67,9 +67,8 @@ begin
                         
                         
 
-out <= Out_aux;
+out_alu <= Out_aux;
 O   <= O_aux;
-Z   <= Z_aux;
 N   <= N_aux;
 C   <= C_aux;
 

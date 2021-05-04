@@ -20,12 +20,12 @@ architecture Behavioral of instr_memory is
 
     type mem_instr is array(0 to 255) of std_logic_vector(31 downto 0);
     constant OUT_instruction_AUX : mem_instr := (
-    X"06000500"
-    X"06010A00"
-    X"06020800"
-    X"06010400"
-    X"05030000"
-    X"01040002"
+    X"06000500",
+    X"06010A00",
+    X"06020800",
+    X"06010400",
+    X"05030000",
+    X"01040002",
     others => X"00000000");
 begin
 	
