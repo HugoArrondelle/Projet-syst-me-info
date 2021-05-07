@@ -8,7 +8,7 @@ entity alu is
     Port (A     	: in STD_LOGIC_VECTOR (7 downto 0);
           B     	: in STD_LOGIC_VECTOR (7 downto 0);
           Out_alu : out STD_LOGIC_VECTOR (7 downto 0);
-          OP    	: in STD_LOGIC_VECTOR (1 downto 0);
+          OP    	: in STD_LOGIC_VECTOR (3 downto 0);
           N    	: out STD_LOGIC;
           O     	: out STD_LOGIC;
           C     	: out STD_LOGIC
@@ -44,9 +44,9 @@ begin
 
 	--affectation*****************
     
-	Out_aux <=     S_add(7 downto 0) when OP=B"01" else
-                  S_sou(7 downto 0) when OP=B"11" else
-                  S_mul(7 downto 0) when OP=B"10" else
+	Out_aux <=     S_add(7 downto 0) when OP=B"0001" else
+                  S_sou(7 downto 0) when OP=B"0011" else
+                  S_mul(7 downto 0) when OP=B"0010" else
                   "00000000";
 
 	--flags***********************
@@ -57,12 +57,12 @@ begin
     O_aux <= '0' when S_mul_ov = x"00" else '1';
 
 	 --carry
-	 C_aux <= S_add(8) when (OP=B"001") else '0';
+	 C_aux <= S_add(8) when (OP=B"0001") else '0';
 
     --negative
-    N_aux <= '1' when ( ( OP=B"001" and S_add(7)='1' ) or
-                        ( OP=B"011" and S_sou(7)='1' ) or
-                        ( OP=B"010" and S_mul(7)='1' ) ) else '0';
+    N_aux <= '1' when ( ( OP=B"0001" and S_add(7)='1' ) or
+                        ( OP=B"0011" and S_sou(7)='1' ) or
+                        ( OP=B"0010" and S_mul(7)='1' ) ) else '0';
                         
                         
                         

@@ -23,7 +23,7 @@ architecture Behavioral of processor is
         Port (  A       : in STD_LOGIC_VECTOR (7 downto 0);
                 B       : in STD_LOGIC_VECTOR (7 downto 0);
                 Out_alu : out STD_LOGIC_VECTOR (7 downto 0);
-                OP      : in STD_LOGIC_VECTOR (1 downto 0);
+                OP      : in STD_LOGIC_VECTOR (3 downto 0);
                 N       : out STD_LOGIC;
                 O       : out STD_LOGIC;
                 C       : out STD_LOGIC
@@ -37,11 +37,11 @@ architecture Behavioral of processor is
     component pipeline is
         Port (  CLK     : in  STD_LOGIC;
                 A_in    : in  STD_LOGIC_VECTOR (7 downto 0);
-                OP_in   : in  STD_LOGIC_VECTOR (3 downto 0);
+                OP_in   : in  STD_LOGIC_VECTOR (7 downto 0);
                 B_in    : in  STD_LOGIC_VECTOR (7 downto 0);
                 C_in    : in  STD_LOGIC_VECTOR (7 downto 0);
                 A_out   : out  STD_LOGIC_VECTOR (7 downto 0);
-                OP_out  : out  STD_LOGIC_VECTOR (3 downto 0);
+                OP_out  : out  STD_LOGIC_VECTOR (7 downto 0);
                 B_out   : out  STD_LOGIC_VECTOR (7 downto 0);
                 C_out   : out  STD_LOGIC_VECTOR (7 downto 0)
 				 );
@@ -99,7 +99,7 @@ architecture Behavioral of processor is
         Generic ( num_Mux : NATURAL := 0);
         Port (  A       : in  STD_LOGIC_VECTOR (7 downto 0);
                 B       : in  STD_LOGIC_VECTOR (7 downto 0);
-                OP      : in  STD_LOGIC_VECTOR (3 downto 0);
+                OP      : in  STD_LOGIC_VECTOR (7 downto 0);
                 OUT_mux : out STD_LOGIC_VECTOR (7 downto 0));
     end component;
     
@@ -110,14 +110,14 @@ architecture Behavioral of processor is
     component lc is
     
         Generic ( num_lc : STD_LOGIC := '0');
-        Port (  OP      : in  STD_LOGIC_VECTOR (3 downto 0);
+        Port (  OP      : in  STD_LOGIC_VECTOR (7 downto 0);
                 val     : out  STD_LOGIC);
                 
     end component;
     
     
     signal IP_AUX :                                                 STD_LOGIC_VECTOR(7 downto 0);
-    signal OP_DI,OP_EX, OP_MEM, OP_RE:                              STD_LOGIC_VECTOR(3 downto 0);
+    signal OP_DI,OP_EX, OP_MEM, OP_RE:                              STD_LOGIC_VECTOR(7 downto 0);
     signal A_DI, B_DI, C_DI :                                       STD_LOGIC_VECTOR(7 downto 0);
     signal A_EX, B_EX, C_EX :                                       STD_LOGIC_VECTOR(7 downto 0);
     signal A_MEM, B_MEM, C_MEM :                                    STD_LOGIC_VECTOR(7 downto 0);
@@ -131,7 +131,7 @@ architecture Behavioral of processor is
     signal Mux_BdR_Out, Mux_UAL_Out ,Mux_MEM1_Out,Mux_MEM2_Out:     STD_LOGIC_VECTOR(7 downto 0);
     
     signal LC_out,LC_UAL_out,LC_MEM_out :                           STD_LOGIC;
-    signal Ctrl_alu_Aux :                                           STD_LOGIC_VECTOR(1 downto 0);
+    signal Ctrl_alu_Aux :                                           STD_LOGIC_VECTOR(3 downto 0);
     
     
   begin  
@@ -150,7 +150,7 @@ architecture Behavioral of processor is
     Li_Di: pipeline PORT MAP (
                                     CLK =>      CLK_PROC,
                                     A_in =>     Instruction(23 downto 16),
-                                    OP_in =>    Instruction(27 downto 24),
+                                    OP_in =>    Instruction(31 downto 24),
                                     B_in =>     Instruction(15 downto 8),
                                     C_in =>     Instruction(7 downto 0),
                                     
@@ -273,7 +273,7 @@ architecture Behavioral of processor is
     );
     
     
-    --Ctrl_alu_Aux <= B"0" & OP_EX(2 downto 0);
+    Ctrl_alu_Aux <= B"0" & OP_EX(2 downto 0);
         
     ------------------------------------------------------
     -- Data_MEM --
