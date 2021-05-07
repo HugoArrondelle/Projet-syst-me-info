@@ -1,11 +1,11 @@
-
+--------------------------------------------------------------------------------
 -- Company: 
 -- Engineer:
 --
--- Create Date:   19:38:23 05/05/2020
+-- Create Date:   14:00:10 05/07/2021
 -- Design Name:   
--- Module Name:   /home/erpeldin/Documents/4IR/S8/ProjetSystemInfo/processeur/PSI_processor/test_alu.vhd
--- Project Name:  PSI_processor
+-- Module Name:   /home/mauban/ProjetSysInfo/test_ALU.vhd
+-- Project Name:  ProjetSysInfo
 -- Target Device:  
 -- Tool versions:  
 -- Description:   
@@ -30,12 +30,12 @@ USE ieee.std_logic_1164.ALL;
  
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
-USE ieee.numeric_std.ALL;
+--USE ieee.numeric_std.ALL;
  
-ENTITY test_alu IS
-END test_alu;
+ENTITY test_ALU IS
+END test_ALU;
  
-ARCHITECTURE behavior OF test_alu IS 
+ARCHITECTURE behavior OF test_ALU IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
  
@@ -43,47 +43,45 @@ ARCHITECTURE behavior OF test_alu IS
     PORT(
          A : IN  std_logic_vector(7 downto 0);
          B : IN  std_logic_vector(7 downto 0);
-         S : OUT  std_logic_vector(7 downto 0);
-         Ctrl_Alu : IN  std_logic_vector(3 downto 0);
-         C_Flag : OUT  std_logic;
-         Z_Flag : OUT  std_logic;
-         O_Flag : OUT  std_logic;
-         N_Flag : OUT  std_logic
+         Out_alu : OUT  std_logic_vector(7 downto 0);
+         OP : IN  std_logic_vector(1 downto 0);
+         N : OUT  std_logic;
+         O : OUT  std_logic;
+         C : OUT  std_logic
         );
     END COMPONENT;
-	
-	  -- Clock period definitions
-   constant CLK_period : time := 50 ns;
-	
+    
+
    --Inputs
 	signal CLK : std_logic :='0';
    signal A : std_logic_vector(7 downto 0) := (others => '0');
    signal B : std_logic_vector(7 downto 0) := (others => '0');
-   signal Ctrl_Alu : std_logic_vector(3 downto 0) := (others => '0');
+   signal OP : std_logic_vector(1 downto 0) := (others => '0');
 
  	--Outputs
-   signal S : std_logic_vector(7 downto 0);
-   signal C_Flag : std_logic;
-   signal Z_Flag : std_logic;
-   signal O_Flag : std_logic;
-   signal N_Flag : std_logic;
+   signal Out_alu : std_logic_vector(7 downto 0);
+   signal N : std_logic;
+   signal O : std_logic;
+   signal C : std_logic;
+   -- No clocks detected in port list. Replace <clock> below with 
+   -- appropriate port name 
+	constant CLK_period : time := 50 ns;
  
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
    uut: alu PORT MAP (
-			 A => A,
-			 B => B,
-          S => S,
-          Ctrl_Alu => Ctrl_Alu,
-          C_Flag => C_Flag,
-          Z_Flag => Z_Flag,
-          O_Flag => O_Flag,
-          N_Flag => N_Flag
+          A => A,
+          B => B,
+          Out_alu => Out_alu,
+          OP => OP,
+          N => N,
+          O => O,
+          C => C
         );
 
    -- Clock process definitions
-	CLK_process :process
+   CLK_process :process
 	begin
 		CLK <= '0';
 		wait for CLK_period/2;
@@ -93,21 +91,8 @@ BEGIN
  
 	 -- Stimulus process
 	 
-		A <= X"FF";
-		B <= X"01";
-      Ctrl_Alu <= X"0", X"1" after 100ns, X"2" after 200 ns, X"3" after 300ns;
-     
---    Stimulus process
---   stim_proc: process
---   begin		
---       hold reset state for 100 ns.
---      wait for 100 ns;	
---
---      wait for CLK_period*10;
---
---       insert stimulus here 
---
---      wait;
---   end process;
+	A <= X"02";
+	B <= X"01";
+	OP <= "01" after 100ns, "11" after 200 ns;
 
 END;

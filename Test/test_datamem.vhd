@@ -2,15 +2,15 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   11:08:45 05/11/2020
+-- Create Date:   14:14:45 05/07/2021
 -- Design Name:   
--- Module Name:   /home/patrick/Documents/Cours/4A/TP/TP_PSI/ProjetSystemInfo/processeur/PSI_processor/test_intr_memory.vhd
--- Project Name:  PSI_processor
+-- Module Name:   /home/mauban/ProjetSysInfo/test_datamem.vhd
+-- Project Name:  ProjetSysInfo
 -- Target Device:  
 -- Tool versions:  
 -- Description:   
 -- 
--- VHDL Test Bench Created by ISE for module: instr_memory
+-- VHDL Test Bench Created by ISE for module: data_memory
 -- 
 -- Dependencies:
 -- 
@@ -32,28 +32,34 @@ USE ieee.std_logic_1164.ALL;
 -- arithmetic functions with Signed or Unsigned values
 --USE ieee.numeric_std.ALL;
  
-ENTITY test_intr_memory IS
-END test_intr_memory;
+ENTITY test_datamem IS
+END test_datamem;
  
-ARCHITECTURE behavior OF test_intr_memory IS 
+ARCHITECTURE behavior OF test_datamem IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
  
-    COMPONENT instr_memory
+    COMPONENT data_memory
     PORT(
          addr : IN  std_logic_vector(7 downto 0);
+         IN_mem : IN  std_logic_vector(7 downto 0);
+         RW : IN  std_logic;
+         RST : IN  std_logic;
          CLK : IN  std_logic;
-         instr_OUT : OUT  std_logic_vector(31 downto 0)
+         OUT_mem : OUT  std_logic_vector(7 downto 0)
         );
     END COMPONENT;
     
 
    --Inputs
    signal addr : std_logic_vector(7 downto 0) := (others => '0');
+   signal IN_mem : std_logic_vector(7 downto 0) := (others => '0');
+   signal RW : std_logic := '0';
+   signal RST : std_logic := '0';
    signal CLK : std_logic := '0';
 
  	--Outputs
-   signal instr_OUT : std_logic_vector(31 downto 0);
+   signal OUT_mem : std_logic_vector(7 downto 0);
 
    -- Clock period definitions
    constant CLK_period : time := 10 ns;
@@ -61,10 +67,13 @@ ARCHITECTURE behavior OF test_intr_memory IS
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: instr_memory PORT MAP (
+   uut: data_memory PORT MAP (
           addr => addr,
+          IN_mem => IN_mem,
+          RW => RW,
+          RST => RST,
           CLK => CLK,
-          instr_OUT => instr_OUT
+          OUT_mem => OUT_mem
         );
 
    -- Clock process definitions
@@ -76,9 +85,9 @@ BEGIN
 		wait for CLK_period/2;
    end process;
  
-
-	addr <=X"01";
-
-      -- insert stimulus here 
+	RST<='0', '1' after 10 ns;
+   RW<= '1' after 100 ns;
+	IN_mem<=X"05"; 
+	addr<=x"02";
 
 END;

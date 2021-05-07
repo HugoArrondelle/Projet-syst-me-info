@@ -131,7 +131,7 @@ architecture Behavioral of processor is
     signal Mux_BdR_Out, Mux_UAL_Out ,Mux_MEM1_Out,Mux_MEM2_Out:     STD_LOGIC_VECTOR(7 downto 0);
     
     signal LC_out,LC_UAL_out,LC_MEM_out :                           STD_LOGIC;
-    signal Ctrl_alu_Aux :                                           STD_LOGIC_VECTOR(3 downto 0);
+    signal Ctrl_alu_Aux :                                           STD_LOGIC_VECTOR(1 downto 0);
     
     
   begin  
@@ -273,7 +273,7 @@ architecture Behavioral of processor is
     );
     
     
-    Ctrl_alu_Aux <= B"0" & OP_EX(2 downto 0);
+    --Ctrl_alu_Aux <= B"0" & OP_EX(2 downto 0);
         
     ------------------------------------------------------
     -- Data_MEM --

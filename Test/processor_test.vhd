@@ -2,10 +2,10 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   11:52:43 05/06/2020
+-- Create Date:   17:55:29 05/04/2021
 -- Design Name:   
--- Module Name:   /home/patrick/Documents/Cours/4A/TP/TP_PSI/ProjetSystemInfo/processeur/PSI_processor/test_proc.vhd
--- Project Name:  PSI_processor
+-- Module Name:   /home/mauban/ProjetSysInfo/processor_test.vhd
+-- Project Name:  ProjetSysInfo
 -- Target Device:  
 -- Tool versions:  
 -- Description:   
@@ -32,17 +32,18 @@ USE ieee.std_logic_1164.ALL;
 -- arithmetic functions with Signed or Unsigned values
 --USE ieee.numeric_std.ALL;
  
-ENTITY test_proc IS
-END test_proc;
+ENTITY processor_test IS
+END processor_test;
  
-ARCHITECTURE behavior OF test_proc IS 
+ARCHITECTURE behavior OF processor_test IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
  
     COMPONENT processor
     PORT(
          CLK_PROC : IN  std_logic;
-         RST_PROC : IN  std_logic
+         RST_PROC : IN  std_logic;
+         IP : IN  std_logic_vector(7 downto 0)
         );
     END COMPONENT;
     
@@ -50,6 +51,7 @@ ARCHITECTURE behavior OF test_proc IS
    --Inputs
    signal CLK_PROC : std_logic := '0';
    signal RST_PROC : std_logic := '0';
+   signal IP : std_logic_vector(7 downto 0) := (others => '0');
 
    -- Clock period definitions
    constant CLK_PROC_period : time := 10 ns;
@@ -59,7 +61,8 @@ BEGIN
 	-- Instantiate the Unit Under Test (UUT)
    uut: processor PORT MAP (
           CLK_PROC => CLK_PROC,
-          RST_PROC => RST_PROC
+          RST_PROC => RST_PROC,
+          IP => IP
         );
 
    -- Clock process definitions

@@ -45,9 +45,9 @@ begin
 	--affectation*****************
     
 	Out_aux <=     S_add(7 downto 0) when OP=B"01" else
-                   S_sou(7 downto 0) when OP=B"11" else
-                   S_mul(7 downto 0) when OP=B"10" else
-                    "00000000";
+                  S_sou(7 downto 0) when OP=B"11" else
+                  S_mul(7 downto 0) when OP=B"10" else
+                  "00000000";
 
 	--flags***********************
 
@@ -56,8 +56,8 @@ begin
     S_mul_ov <= S_mul_aux(15 downto 7);
     O_aux <= '0' when S_mul_ov = x"00" else '1';
 
-	--carry
-	C_aux <= S_add(8) when (OP=B"001") else '0';
+	 --carry
+	 C_aux <= S_add(8) when (OP=B"001") else '0';
 
     --negative
     N_aux <= '1' when ( ( OP=B"001" and S_add(7)='1' ) or
