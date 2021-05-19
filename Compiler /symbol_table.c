@@ -64,7 +64,7 @@ Symbol *new_symbol(char *identifier, enum symbol_type st)
 	}
 
 	current_address += SYMBOL_SIZE;
-   
+    //printf_table_symbol();
 	return &(symbol_table[index_symbol_table++]);
 }
 
@@ -146,7 +146,7 @@ Symbol *add_tmp_symbol(void)
 			current_depth);
 
 	tmp_current_address += SYMBOL_SIZE;
-
+    //prinft_tmp_table_symbol();
 	return &(tmp_symbol_table[tmp_index_symbol_table++]);
 }
 
@@ -155,7 +155,7 @@ Symbol *tmp_table_pop(void)
 	if (tmp_index_symbol_table) {
 
 		tmp_current_address -= SYMBOL_SIZE;
-        //printf_table_symbol();
+        
         return &(tmp_symbol_table[--tmp_index_symbol_table]);
 	}
     

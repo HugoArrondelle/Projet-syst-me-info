@@ -1,7 +1,16 @@
 void main() {
     
-        const int h = 6;
-		int a = (2 + 1) * 3;
+    
+        int e;
+    
+        int u = 9;
+        
+        e = 8;
+        
+        const int h = 9;
+    
+        int a = (2 + 1) * 3;
+    
 		int b = a + 12;
 
 

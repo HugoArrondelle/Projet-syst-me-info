@@ -22,8 +22,7 @@
 	}
 
 	
-	void
-expression_To_condition() {
+	void expression_To_condition() {
 
 		asm_comment(asm_get_next_line(),"Translate expression to condition");
 
@@ -305,7 +304,7 @@ EXPRESSION :	T_po EXPRESSION T_pf
 
 		;
            
-FUNCTION_ARGS :	/* NOTHING */ 
+FUNCTION_ARGS :	
 		| EXPRESSION
 		| EXPRESSION T_comma FUNCTION_ARGS_NOT_EMPTY
 		;
@@ -447,13 +446,11 @@ ASSIGNMENT :	LVALUE T_equal
 
 IF_STATEMENT : 	T_if
 			{
-				asm_comment(asm_get_next_line(),"if statement");
+				asm_comment(asm_get_next_line(),"if statement avec else ");
 			}
-            T_po EXPRESSION T_pf
+        T_po EXPRESSION T_pf
 			{
-				
-				
-expression_To_condition();
+                expression_To_condition();
 				asm_comment(asm_get_next_line(),"if block {");
 
 				Symbol *condition = tmp_table_pop();
@@ -462,7 +459,6 @@ expression_To_condition();
 			}
 		BODY T_else
 			{
-            
 				asm_update_jmp($1, asm_get_next_line() + 1);
 
     
@@ -477,14 +473,14 @@ expression_To_condition();
 
 		| T_if
 			{
-				asm_comment(asm_get_next_line(),"if statement");
+				asm_comment(asm_get_next_line(),"if statement sans else ");
 			}
 		T_po EXPRESSION T_pf
 			{
 				asm_comment(asm_get_next_line(),"if block {");
 
 				
-expression_To_condition();
+                expression_To_condition();
 
 				asm_update_jmp($1, asm_get_next_line());
 			}
@@ -507,7 +503,7 @@ WHILE_STATEMENT :	T_while T_po
 				{
 
 					
-expression_To_condition();
+                    expression_To_condition();
 
 					Symbol *condition = tmp_table_pop();
 

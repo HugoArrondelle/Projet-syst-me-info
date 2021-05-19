@@ -8,34 +8,26 @@
 #define JMP_FINISHED		0
 
 
-#define ADDRESS_SYMBOL_STR_BOOLEAN	0
-#define ADDRESS_SYMBOL_STR		"@"
-#define LINE_NB				0
-#define COMMENTS			0
+
+#define COMMENTS			1
 
 #ifdef DEBUG
-# undef ADDRESS_SYMBOL_STR_BOOLEAN
-# define ADDRESS_SYMBOL_STR_BOOLEAN	1
-# undef LINE_NB
-# define LINE_NB			1
 # undef COMMENTS
 # define COMMENTS			1
 #endif
 
-#define instruction_TABLE_ASM_SIZE	1024
-#define ASM_COMMENT_TABLE_SIZE    instruction_TABLE_ASM_SIZE
 
 
-instruction_ASM instruction_TABLE_ASM[instruction_TABLE_ASM_SIZE];
+instruction_ASM instruction_TABLE_ASM[1024];
 int index_instruction_TABLE_ASM = 0;
-ASM_comment asm_comment_table[ASM_COMMENT_TABLE_SIZE];
+ASM_comment asm_comment_table[1024];
 int asm_comment_table_index = 0;
 
 
 
 static inline instruction_ASM *get_next_instruction()
 {
-    if (index_instruction_TABLE_ASM < instruction_TABLE_ASM_SIZE)
+    if (index_instruction_TABLE_ASM < 1024)
         return &(instruction_TABLE_ASM[index_instruction_TABLE_ASM++]);
     return NULL;
 }
@@ -50,12 +42,7 @@ void display_asm(void)
 
 		char line_nb[10] = "";
 		char *address_symbol = "";
-#if LINE_NB
-		snprintf(line_nb, 10, "%3d: ", i);
-#endif
-#if ADDRESS_SYMBOL_STR_BOOLEAN
-		address_symbol = ADDRESS_SYMBOL_STR;
-#endif
+
 
 #if COMMENTS
 		while (i == asm_comment_table[comments_index].line_nb) {
@@ -204,7 +191,6 @@ int asm_prepare_JMF(int condition_addr)
 
 	i->opcode	 	= JMF;
 	i->arg1			= condition_addr;
-	/*i->arg2		= unknown for now;*/
 	i->arg3			= JMP_NOT_FINISHED;
 
 	return (index_instruction_TABLE_ASM - 1);
@@ -311,7 +297,7 @@ void asm_comment(int line_nb, char *comment)
 {
     
     ASM_comment *c ;
-    if (asm_comment_table_index < ASM_COMMENT_TABLE_SIZE)
+    if (asm_comment_table_index < 1024)
         c =  &(asm_comment_table[asm_comment_table_index++]);
     
     c->line_nb = line_nb;
