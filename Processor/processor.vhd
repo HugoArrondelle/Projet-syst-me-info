@@ -4,7 +4,6 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 
 
-
 entity processor is
 	port( CLK_PROC : in STD_LOGIC;
 			RST_PROC : in STD_LOGIC;
@@ -24,7 +23,6 @@ architecture Behavioral of processor is
                 B       : in STD_LOGIC_VECTOR (7 downto 0);
                 Out_alu : out STD_LOGIC_VECTOR (7 downto 0);
                 OP      : in STD_LOGIC_VECTOR (3 downto 0);
-                N       : out STD_LOGIC;
                 O       : out STD_LOGIC;
                 C       : out STD_LOGIC
          );
@@ -96,7 +94,7 @@ architecture Behavioral of processor is
     
     component mux is
     
-        Generic ( num_Mux : NATURAL := 0);
+        Generic ( mux_number : NATURAL := 0);
         Port (  A       : in  STD_LOGIC_VECTOR (7 downto 0);
                 B       : in  STD_LOGIC_VECTOR (7 downto 0);
                 OP      : in  STD_LOGIC_VECTOR (7 downto 0);
@@ -109,7 +107,7 @@ architecture Behavioral of processor is
     
     component lc is
     
-        Generic ( num_lc : STD_LOGIC := '0');
+        Generic ( lc_number : STD_LOGIC := '0');
         Port (  OP      : in  STD_LOGIC_VECTOR (7 downto 0);
                 val     : out  STD_LOGIC);
                 
@@ -127,7 +125,7 @@ architecture Behavioral of processor is
     signal UAL_OUT,DATA_MEM_OUT :                                   STD_LOGIC_VECTOR(7 downto 0);
     signal Instruction:                                             STD_LOGIC_VECTOR(31 downto 0);
         
-    signal UAL_C_Flag, UAL_O_Flag, UAL_Z_Flag, UAL_N_Flag:          STD_LOGIC;
+    signal UAL_C_Flag, UAL_O_Flag :          							  STD_LOGIC;
     signal Mux_BdR_Out, Mux_UAL_Out ,Mux_MEM1_Out,Mux_MEM2_Out:     STD_LOGIC_VECTOR(7 downto 0);
     
     signal LC_out,LC_UAL_out,LC_MEM_out :                           STD_LOGIC;
@@ -135,10 +133,12 @@ architecture Behavioral of processor is
     
     
   begin  
-    --au RST et au debut mettre IP a 0
+	 ------------------------------------------------------
+    -- Instr_Mem --
+    ------------------------------------------------------
     Instr_Mem : instr_memory PORT MAP   (
-                                            addr =>         IP,
-														  CLK =>          CLK_PROC,
+                                            addr =>         		IP,
+														  CLK =>          		CLK_PROC,
                                             OUT_instruction =>    Instruction
                                         );
         
@@ -268,8 +268,7 @@ architecture Behavioral of processor is
                                     Out_alu =>  UAL_OUT,
                                     OP =>       Ctrl_alu_Aux,
                                     C =>   		UAL_C_Flag,
-                                    O =>   		UAL_O_Flag,
-                                    N =>   		UAL_N_Flag
+                                    O =>   		UAL_O_Flag
     );
     
     

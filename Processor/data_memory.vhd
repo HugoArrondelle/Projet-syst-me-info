@@ -23,23 +23,18 @@ begin
 
 	process
 	begin
-		-- synchrone
 		wait until CLK'event and CLK = '1';
 			if (RST='0') then	
-				-- mise a zero des donnees
 				data <= (others => X"00"); 
 			elsif (RST='1') then
-				-- lecture
 				if (RW='1') then
-					OUT_aux <= data(to_integer(unsigned(addr)))  ;
-				-- ecriture
+					OUT_aux <= data(to_integer(unsigned(addr)));
 				elsif (RW='0') then
 					data(to_integer(unsigned(addr))) <= IN_mem;
 				end if;
 			end if;
 	end process;
 
-	-- en //
 	OUT_mem <= OUT_aux;
 
 end Behavioral;

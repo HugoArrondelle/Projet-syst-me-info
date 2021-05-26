@@ -3,8 +3,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-
-
 entity registre is
     Port ( addrA    : in  STD_LOGIC_VECTOR (3 downto 0);
            addrB    : in  STD_LOGIC_VECTOR (3 downto 0);
@@ -28,17 +26,16 @@ begin
 	begin
 		wait until CLK'event and CLK = '1';
 			if (RST='0') then
-				-- initialisation du banc de registres a 0x00
 				reg <= (others => X"00");
 			elsif (W='1') then
 				reg(to_integer(unsigned(addrW))) <= DATA;				
 			end if;
 	end process;
 	
+	--BYPASS
     QA <= DATA when (W='1' and addrA = addrW) else
         reg(to_integer(unsigned(addrA)));
     QB <= DATA when (W='1' and addrB = addrW) else
         reg(to_integer(unsigned(addrB)));
    
-	
 end Behavioral;

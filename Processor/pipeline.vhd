@@ -3,8 +3,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 
-
-
 entity pipeline is
     Port ( CLK   : in  STD_LOGIC;
            A_in   : in  STD_LOGIC_VECTOR (7 downto 0);
@@ -20,8 +18,6 @@ end pipeline;
 architecture Behavioral of pipeline is
 
 begin
-
--- comportement synchrone
 	process
 	begin
 		wait until CLK'event and CLK = '1';

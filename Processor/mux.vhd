@@ -5,8 +5,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 
 entity mux is
-	Generic ( num_Mux : NATURAL := 0); -- permet de definir le numero du multiplexeur a utiliser (etage)
-	Port ( 	     A          : in  STD_LOGIC_VECTOR (7 downto 0);
+	Generic ( mux_number : NATURAL := 0);
+	Port ( 	 A          : in  STD_LOGIC_VECTOR (7 downto 0);
 				 B          : in  STD_LOGIC_VECTOR (7 downto 0);
 				 OP         : in  STD_LOGIC_VECTOR (7 downto 0);
 				 OUT_mux    : out  STD_LOGIC_VECTOR (7 downto 0));
@@ -14,19 +14,19 @@ end mux;
 
 architecture Behavioral of mux is
 begin
-	OUT_mux <=    A when (num_Mux = 1 and OP = X"06") else -- mux DI/EX, AFC
-			B when (num_Mux = 1 and OP = X"05") else -- mux DI/EX, COP
-			B when (num_Mux = 1 and OP = X"07") else -- mux DI/EX, LOAD
-			B when (num_Mux = 1 and OP = X"08") else -- mux DI/EX, STORE
-			B when (num_Mux = 1) else
-			B when (num_Mux = 2 and OP = X"01") else -- mux EX/Mem, ADD
-			B when (num_Mux = 2 and OP = X"02") else -- mux EX/Mem, MUL
-            B when (num_Mux = 2 and OP = X"03") else -- mux EX/Mem, SOU
-			B when (num_Mux = 2 and OP = X"04") else -- mux EX/Mem, DIV
-			A when (num_Mux = 2 ) else
-			A when (num_Mux = 3 and OP = X"07") else -- mux sortie EX/Mem, LOAD
-			B when (num_mux = 3 ) else
-			A when (num_Mux = 4 and OP = X"08") else -- mux Mem/RE, STORE
+	OUT_mux <=    A when (mux_number = 1 and OP = X"06") else 
+			B when (mux_number = 1 and OP = X"05") else
+			B when (mux_number = 1 and OP = X"07") else
+			B when (mux_number = 1 and OP = X"08") else
+			B when (mux_number = 1) else
+			B when (mux_number = 2 and OP = X"01") else
+			B when (mux_number = 2 and OP = X"02") else
+         B when (mux_number = 2 and OP = X"03") else
+			B when (mux_number = 2 and OP = X"04") else
+			A when (mux_number = 2 ) else
+			A when (mux_number = 3 and OP = X"07") else
+			B when (mux_number = 3 ) else
+			A when (mux_number = 4 and OP = X"08") else
 			B;
 end Behavioral;
 
