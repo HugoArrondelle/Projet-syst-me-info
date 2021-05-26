@@ -1,7 +1,17 @@
 void main() {
 
-    int a = (2 + 1) * 3;
+    
+    
+    int a = 3 * (2 + 1);
+    
     int b;
+    int c = 8 ;
+    b = 0 ;
+    const int d = 9;
+    d = 8;
+    
+    
+
     if (a == 3) {
         b = 9;
     }else{
@@ -10,3 +20,4 @@ void main() {
     printf(b);
     
 }
+

@@ -93,7 +93,10 @@ void display_asm(void)
 				fprintf(out, "%s\x1B[01;36mEQU\x1B[0m %s%d %s%d %s%d\n", line_nb, address_symbol, ins->arg1, address_symbol, ins->arg2, address_symbol, ins->arg3);
 				break;
 
-
+            case DIV:
+                fprintf(out, "%s\x1B[01;36mDIV\x1B[0m %s%d %s%d %s%d\n", line_nb, address_symbol, ins->arg1, address_symbol, ins->arg2, address_symbol, ins->arg3);
+                break;
+                
 			case PRI:
 				fprintf(out, "%s\x1B[01;36mPRI\x1B[0m %s%d\n", line_nb, address_symbol, ins->arg1);
 				break;
@@ -139,6 +142,17 @@ void asm_function_MUL(int addr_result, int addr_arg1, int arg2_addr)
 	i->arg1			= addr_result;
 	i->arg2			= addr_arg1;
 	i->arg3			= arg2_addr;
+}
+
+
+void asm_function_DIV(int addr_result, int addr_arg1, int arg2_addr)
+{
+    instruction_ASM *i = get_next_instruction();
+
+    i->opcode         = DIV;
+    i->arg1            = addr_result;
+    i->arg2            = addr_arg1;
+    i->arg3            = arg2_addr;
 }
 
 

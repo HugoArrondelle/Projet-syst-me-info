@@ -33,6 +33,7 @@ static void init_symbol(Symbol *s, char *identifier, int address, enum init_flag
 		s->type				= type;
 		s->depth			= depth;
 	}
+    printf_table_symbol();
 }
 
 Symbol *new_symbol(char *identifier, enum symbol_type st)
@@ -62,9 +63,8 @@ Symbol *new_symbol(char *identifier, enum symbol_type st)
 
 		default: return NULL;
 	}
-
 	current_address += SYMBOL_SIZE;
-    //printf_table_symbol();
+    
 	return &(symbol_table[index_symbol_table++]);
 }
 
@@ -146,7 +146,7 @@ Symbol *add_tmp_symbol(void)
 			current_depth);
 
 	tmp_current_address += SYMBOL_SIZE;
-    //prinft_tmp_table_symbol();
+    prinft_tmp_table_symbol();
 	return &(tmp_symbol_table[tmp_index_symbol_table++]);
 }
 

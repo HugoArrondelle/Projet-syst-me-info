@@ -3,11 +3,11 @@
 	#include <stdlib.h>
 	#include <string.h>
 
-	#include "syntax_parser_data_types.h"
+    #include "val.h"
 	#include "symbol_table.h"
 	#include "asm.h"
 
-
+    void expression_To_condition();
 	/* Input stream */
 	FILE *yyin;
 
@@ -21,31 +21,16 @@
 		return 1;
 	}
 
+    
 	
-	void expression_To_condition() {
-
-		asm_comment(asm_get_next_line(),"Translate expression to condition");
-
-		asm_push_value(0);
-		Symbol *zero = tmp_table_pop();
-		Symbol *expr = tmp_table_peek();
-        
-		asm_function_EQU(expr->address, expr->address, zero->address);
-
-		asm_push_value(1);
-		Symbol *one = tmp_table_pop();
-		asm_function_SUB(expr->address, one->address, expr->address);
-
-	}
 %}
-
 
 %union	{ 
 		int integer_nb;
 		char *string;
 		Symbol *symbol;
 		enum symbol_type symbol_type;
-		struct _lvalue lvalue;
+		struct _VALEUR VALEUR;
 	}
 
 %token
@@ -114,17 +99,19 @@
 			T_ampersand
 
 
+%type <symbol>     EXPRESSION
+%type <VALEUR>    VALEUR
+
+%type <symbol_type>     DECLARATION_TYPE
+%type <symbol>         DECLARATION_AND_ASSIGNMENT
+
 %left T_equal
 %left T_less_than T_less_than_or_equal_to T_greater_than T_greater_than_or_equal_to T_different T_equal_comparison
 %left T_add T_sub
 %left T_mul T_div T_mod
 %left T_po T_pf
 
-%type <symbol> 	EXPRESSION
-%type <lvalue>	LVALUE
 
-%type <symbol_type> 	DECLARATION_TYPE
-%type <symbol> 		DECLARATION_AND_ASSIGNMENT
 
 %%
 
@@ -195,59 +182,16 @@ EXPRESSION :	T_po EXPRESSION T_pf
 			}
 
 		| EXPRESSION T_div EXPRESSION
-			{ 
-			}
-
-		| EXPRESSION T_mod EXPRESSION
-			{ 
-			}
-
-		| EXPRESSION T_less_than EXPRESSION
 			{
-				Symbol *op2 = tmp_table_pop();
-				Symbol *op1 = tmp_table_peek();
+                Symbol *op2 = tmp_table_pop();
+                Symbol *op1 = tmp_table_peek();
 
-				asm_function_INF(op1->address, op1->address, op2->address);
-				$$ = op1;
+                asm_function_DIV(op1->address, op1->address, op2->address);
+
+                $$ = op1;
 			}
 
-		| EXPRESSION T_less_than_or_equal_to EXPRESSION
-			{
-				Symbol *op2 = tmp_table_pop();
-				Symbol *op1 = tmp_table_peek();
 
-				asm_function_SUP(op1->address, op1->address, op2->address);
-
-				asm_push_value(1);
-				op2 = tmp_table_pop();
-
-				asm_function_SUB(op1->address, 1, op1->address);
-				$$ = op1;
-			}
-
-		| EXPRESSION T_greater_than EXPRESSION
-			{
-				Symbol *op2 = tmp_table_pop();
-				Symbol *op1 = tmp_table_peek();
-
-				asm_function_SUP(op1->address, op1->address, op2->address);
-				$$ = op1;
-			}
-
-		| EXPRESSION T_greater_than_or_equal_to EXPRESSION
-			{
-				Symbol *op2 = tmp_table_pop();
-				Symbol *op1 = tmp_table_peek();
-
-				asm_function_INF(op1->address, op1->address, op2->address);
-
-				asm_push_value(1);
-				op2 = tmp_table_pop();
-
-				asm_function_SUB(op1->address, 1, op1->address);
-
-				$$ = op1;
-			}
 
 		| EXPRESSION T_different EXPRESSION
 			{
@@ -306,18 +250,18 @@ EXPRESSION :	T_po EXPRESSION T_pf
            
 FUNCTION_ARGS :	
 		| EXPRESSION
-		| EXPRESSION T_comma FUNCTION_ARGS_NOT_EMPTY
+		| EXPRESSION T_comma FUNCTION_NEMPTY
 		;
  
-FUNCTION_ARGS_NOT_EMPTY :	EXPRESSION
-				| EXPRESSION T_comma FUNCTION_ARGS_NOT_EMPTY
+FUNCTION_NEMPTY :	EXPRESSION
+				| EXPRESSION T_comma FUNCTION_NEMPTY
 				;
            
 PRINTF :	T_printf T_po
 			{
 				asm_comment(asm_get_next_line(), "printf");
 			}
-		FUNCTION_ARGS_NOT_EMPTY T_pf
+		FUNCTION_NEMPTY T_pf
 			{
 				Symbol *addr = tmp_table_pop();
 				asm_function_PRI(addr->address);
@@ -352,7 +296,7 @@ DECLARATION_AND_ASSIGNMENT :	DECLARATION_TYPE T_identifier T_equal
 				EXPRESSION
 					{
 						if (!is_available($2)) {
-                            printf("\x1B[01;31m[!] ERROR: \x1B[0m  UDeclaration of the already declared symbol '%s'. \n ",$2);
+                            printf("\x1B[01;31m[!] ERROR: \x1B[0m  UnDeclaration of the already declared symbol '%s'. \n ",$2);
                             exit(1);
 						}
 
@@ -393,17 +337,17 @@ DECLARATION :	DECLARATION_AND_ASSIGNMENT
 			}
 		;
 
-LVALUE :	T_identifier
+VALEUR :	T_identifier
 			{
-				struct _lvalue l = {$1, 0};
+				struct _VALEUR l = {$1, 0};
 				$$ = l;
 			}
-		| T_mul LVALUE
+		| T_mul VALEUR
 			{
 				// Pointer
 			}
 
-ASSIGNMENT :	LVALUE T_equal
+ASSIGNMENT :	VALEUR T_equal
 			{
 				int comment_size = strlen($1.identifier) + $1.pointer_depth + 50;
 				char *comment = malloc(comment_size);
@@ -419,23 +363,23 @@ ASSIGNMENT :	LVALUE T_equal
 			}
 		EXPRESSION
 			{
-				struct _lvalue lvalue = $1;
+				struct _VALEUR VALEUR = $1;
 				int depth;
 				Symbol *s = get_symbol($1.identifier);
 
 				if (s == NULL) {
-                    printf("\x1B[01;31m[!] ERROR: \x1B[0m  Undeclared symbol '%s'", lvalue.identifier);
+                    printf("\x1B[01;31m[!] ERROR: \x1B[0m  Undeclared symbol '%s'", VALEUR.identifier);
                     exit(1);
 				}
                 
-                if (lvalue.pointer_depth == 0) {
+                if (VALEUR.pointer_depth == 0) {
 
                     if (!is_constant(s)) {
                         Symbol *expr = tmp_table_pop();
                         asm_function_COP(s->address, expr->address);
 
                     } else {
-                        printf("\x1B[01;31m[!] ERROR: \x1B[0m  Symbol '%s' declared with 'const' class is not mutable", lvalue.identifier);
+                        printf("\x1B[01;31m[!] ERROR: \x1B[0m  Symbol '%s' declared with 'const' class is not mutable", VALEUR.identifier);
                         
                     }
                 }
@@ -520,6 +464,25 @@ WHILE_STATEMENT :	T_while T_po
 
 
 %%
+    
+    
+    
+    
+    void expression_To_condition() {
+
+        asm_comment(asm_get_next_line(),"Translate expression to condition");
+
+        asm_push_value(0);
+        Symbol *zero = tmp_table_pop();
+        Symbol *expr = tmp_table_peek();
+        
+        asm_function_EQU(expr->address, expr->address, zero->address);
+
+        asm_push_value(1);
+        Symbol *one = tmp_table_pop();
+        asm_function_SUB(expr->address, one->address, expr->address);
+
+    }
 
 int main(int argc, char *argv[])
 {

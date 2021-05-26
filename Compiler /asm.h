@@ -69,6 +69,8 @@ void asm_function_INF(int addr_result, int addr_arg1, int addr_arg2);
 void asm_function_SUP(int addr_result, int addr_arg1, int addr_arg2);
 void asm_function_EQU(int addr_result, int addr_arg1, int addr_arg2);
 
+void asm_function_DIV(int addr_result, int addr_arg1, int addr_arg2);
+
 void asm_function_PRI(int addr);
 
 void asm_function_STORE(int addr_arg1, int addr_arg2);
