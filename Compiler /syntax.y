@@ -235,7 +235,7 @@ EXPRESSION :	T_po EXPRESSION T_pf
 				Symbol *s = get_symbol($1);
 
 				if (s == NULL) {
-                    printf("\x1B[01;31m[!] ERROR: \x1B[0m  Undeclared symbol '%s'. \n ",$1);
+                    printf("\x1B[01;31m[!] ERROR: \x1B[0m symbole non déclaré '%s'. \n ",$1);
                     exit(1);
 				}
 
@@ -290,13 +290,13 @@ DECLARATION_AND_ASSIGNMENT :	DECLARATION_TYPE T_identifier T_equal
 					{
 						int comment_size = strlen($2) + 55;
 						char *comment = malloc(comment_size);
-						snprintf(comment, comment_size, "declaration and initialization of variable '%s'", $2);
+						snprintf(comment, comment_size, "Déclaration et initialisation de la variable '%s'", $2);
 						asm_comment(asm_get_next_line(),comment);
 					}
 				EXPRESSION
 					{
 						if (!is_available($2)) {
-                            printf("\x1B[01;31m[!] ERROR: \x1B[0m  UnDeclaration of the already declared symbol '%s'. \n ",$2);
+                            printf("\x1B[01;31m[!] ERROR: \x1B[0m  Symbole deja déclaré '%s'. \n ",$2);
                             exit(1);
 						}
 
@@ -319,7 +319,7 @@ DECLARATION :	DECLARATION_AND_ASSIGNMENT
 		| DECLARATION_TYPE T_identifier
 			{
 				if (!is_available($2)) {
-					printf("\x1B[01;31m[!] ERROR: \x1B[0m  Declaration of the already declared symbol '%s'", $2);
+					printf("\x1B[01;31m[!] ERROR: \x1B[0m  Déclaration symbole deja déclaré '%s'", $2);
                     exit(1);
 				}
 
@@ -329,7 +329,7 @@ DECLARATION :	DECLARATION_AND_ASSIGNMENT
                 
                 if (is_constant(s)) {
                     
-                    fprintf(stderr, "\x1B[01;32m[*] WARNING: Symbol '%s' declared with 'const' class not initialized \n\x1B[0m",$2);
+                    fprintf(stderr, "\x1B[01;32m[*] WARNING: Symbol '%s' déclaré en 'const' non initialisable \n\x1B[0m",$2);
                 }
                 
 
@@ -354,7 +354,7 @@ ASSIGNMENT :	VALEUR T_equal
 				int i;
 				int comment_current_length = 0;
 
-				snprintf(comment, comment_size, "assignment of variable '");
+				snprintf(comment, comment_size, "assignation variable '");
 				comment_current_length = strlen(comment);
 
 				snprintf(&(comment[comment_current_length]), comment_size - (comment_current_length), "%s'", $1.identifier);
@@ -368,7 +368,7 @@ ASSIGNMENT :	VALEUR T_equal
 				Symbol *s = get_symbol($1.identifier);
 
 				if (s == NULL) {
-                    printf("\x1B[01;31m[!] ERROR: \x1B[0m  Undeclared symbol '%s'", VALEUR.identifier);
+                    printf("\x1B[01;31m[!] ERROR: \x1B[0m  Symbole non déclaré'%s'", VALEUR.identifier);
                     exit(1);
 				}
                 
@@ -379,7 +379,7 @@ ASSIGNMENT :	VALEUR T_equal
                         asm_function_COP(s->address, expr->address);
 
                     } else {
-                        printf("\x1B[01;31m[!] ERROR: \x1B[0m  Symbol '%s' declared with 'const' class is not mutable", VALEUR.identifier);
+                        printf("\x1B[01;31m[!] ERROR: \x1B[0m  Symbol '%s' est un 'const' donc non modifiable", VALEUR.identifier);
                         
                     }
                 }
@@ -390,7 +390,7 @@ ASSIGNMENT :	VALEUR T_equal
 
 IF_STATEMENT : 	T_if
 			{
-				asm_comment(asm_get_next_line(),"if statement avec else ");
+				asm_comment(asm_get_next_line(),"if condition avec else ");
 			}
         T_po EXPRESSION T_pf
 			{
@@ -407,17 +407,17 @@ IF_STATEMENT : 	T_if
 
     
 				$1 = asm_prepare_JMP();
-				asm_comment(asm_get_next_line(),"else statement");
+				asm_comment(asm_get_next_line(),"else condition");
 			}
 		BODY
 			{
 				asm_update_jmp($1, asm_get_next_line());
-				asm_comment(asm_get_next_line(),"} end of if-else statement");
+				asm_comment(asm_get_next_line(),"} fin if-else ");
 			}
 
 		| T_if
 			{
-				asm_comment(asm_get_next_line(),"if statement sans else ");
+				asm_comment(asm_get_next_line(),"if condition sans else ");
 			}
 		T_po EXPRESSION T_pf
 			{
@@ -431,7 +431,7 @@ IF_STATEMENT : 	T_if
 		BODY
 			{
 				asm_update_jmp($1, asm_get_next_line());
-				asm_comment(asm_get_next_line(),"} end of if statement");
+				asm_comment(asm_get_next_line(),"} fin if ");
 			}
 		;
 
@@ -439,7 +439,7 @@ IF_STATEMENT : 	T_if
 
 WHILE_STATEMENT :	T_while T_po
 				{
-					asm_comment(asm_get_next_line(),"while statement");
+					asm_comment(asm_get_next_line(),"while condition");
 
 					$2 = asm_get_next_line();
 				}
@@ -452,13 +452,13 @@ WHILE_STATEMENT :	T_while T_po
 					Symbol *condition = tmp_table_pop();
 
 					$1 = asm_prepare_JMF(condition->address);
-					asm_comment(asm_get_next_line(),"while block {");
+					asm_comment(asm_get_next_line(),"while  {");
 				}
 			BODY
 				{
 					asm_update_jmp($1, asm_get_next_line() + 1);
 					asm_function_JMP($2);
-					asm_comment(asm_get_next_line(),"} end of while statement");
+					asm_comment(asm_get_next_line(),"} fin while ");
 				}
 			;
 
@@ -470,7 +470,7 @@ WHILE_STATEMENT :	T_while T_po
     
     void expression_To_condition() {
 
-        asm_comment(asm_get_next_line(),"Translate expression to condition");
+        asm_comment(asm_get_next_line(),"expression isTrue ? ");
 
         asm_push_value(0);
         Symbol *zero = tmp_table_pop();

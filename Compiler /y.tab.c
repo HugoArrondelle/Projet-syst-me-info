@@ -1661,7 +1661,7 @@ yyreduce:
 				Symbol *s = get_symbol((yyvsp[(1) - (1)].string));
 
 				if (s == NULL) {
-                    printf("\x1B[01;31m[!] ERROR: \x1B[0m  Undeclared symbol '%s'. \n ",(yyvsp[(1) - (1)].string));
+                    printf("\x1B[01;31m[!] ERROR: \x1B[0m symbole non déclaré '%s'. \n ",(yyvsp[(1) - (1)].string));
                     exit(1);
 				}
 
@@ -1709,7 +1709,7 @@ yyreduce:
     {
 						int comment_size = strlen((yyvsp[(2) - (3)].string)) + 55;
 						char *comment = malloc(comment_size);
-						snprintf(comment, comment_size, "declaration and initialization of variable '%s'", (yyvsp[(2) - (3)].string));
+						snprintf(comment, comment_size, "Déclaration et initialisation de la variable '%s'", (yyvsp[(2) - (3)].string));
 						asm_comment(asm_get_next_line(),comment);
 					}
     break;
@@ -1718,7 +1718,7 @@ yyreduce:
 #line 297 "syntax.y"
     {
 						if (!is_available((yyvsp[(2) - (5)].string))) {
-                            printf("\x1B[01;31m[!] ERROR: \x1B[0m  UnDeclaration of the already declared symbol '%s'. \n ",(yyvsp[(2) - (5)].string));
+                            printf("\x1B[01;31m[!] ERROR: \x1B[0m  Symbole deja déclaré '%s'. \n ",(yyvsp[(2) - (5)].string));
                             exit(1);
 						}
 
@@ -1741,7 +1741,7 @@ yyreduce:
 #line 320 "syntax.y"
     {
 				if (!is_available((yyvsp[(2) - (2)].string))) {
-					printf("\x1B[01;31m[!] ERROR: \x1B[0m  Declaration of the already declared symbol '%s'", (yyvsp[(2) - (2)].string));
+					printf("\x1B[01;31m[!] ERROR: \x1B[0m  Déclaration symbole deja déclaré '%s'", (yyvsp[(2) - (2)].string));
                     exit(1);
 				}
 
@@ -1751,7 +1751,7 @@ yyreduce:
                 
                 if (is_constant(s)) {
                     
-                    fprintf(stderr, "\x1B[01;32m[*] WARNING: Symbol '%s' declared with 'const' class not initialized \n\x1B[0m",(yyvsp[(2) - (2)].string));
+                    fprintf(stderr, "\x1B[01;32m[*] WARNING: Symbol '%s' déclaré en 'const' non initialisable \n\x1B[0m",(yyvsp[(2) - (2)].string));
                 }
                 
 
@@ -1782,7 +1782,7 @@ yyreduce:
 				int i;
 				int comment_current_length = 0;
 
-				snprintf(comment, comment_size, "assignment of variable '");
+				snprintf(comment, comment_size, "assignation variable '");
 				comment_current_length = strlen(comment);
 
 				snprintf(&(comment[comment_current_length]), comment_size - (comment_current_length), "%s'", (yyvsp[(1) - (2)].VALEUR).identifier);
@@ -1799,7 +1799,7 @@ yyreduce:
 				Symbol *s = get_symbol((yyvsp[(1) - (4)].VALEUR).identifier);
 
 				if (s == NULL) {
-                    printf("\x1B[01;31m[!] ERROR: \x1B[0m  Undeclared symbol '%s'", VALEUR.identifier);
+                    printf("\x1B[01;31m[!] ERROR: \x1B[0m  Symbole non déclaré'%s'", VALEUR.identifier);
                     exit(1);
 				}
                 
@@ -1810,7 +1810,7 @@ yyreduce:
                         asm_function_COP(s->address, expr->address);
 
                     } else {
-                        printf("\x1B[01;31m[!] ERROR: \x1B[0m  Symbol '%s' declared with 'const' class is not mutable", VALEUR.identifier);
+                        printf("\x1B[01;31m[!] ERROR: \x1B[0m  Symbol '%s' est un 'const' donc non modifiable", VALEUR.identifier);
                         
                     }
                 }
@@ -1821,7 +1821,7 @@ yyreduce:
   case 47:
 #line 392 "syntax.y"
     {
-				asm_comment(asm_get_next_line(),"if statement avec else ");
+				asm_comment(asm_get_next_line(),"if condition avec else ");
 			}
     break;
 
@@ -1844,7 +1844,7 @@ yyreduce:
 
     
 				(yyvsp[(1) - (8)].integer_nb) = asm_prepare_JMP();
-				asm_comment(asm_get_next_line(),"else statement");
+				asm_comment(asm_get_next_line(),"else condition");
 			}
     break;
 
@@ -1852,14 +1852,14 @@ yyreduce:
 #line 413 "syntax.y"
     {
 				asm_update_jmp((yyvsp[(1) - (10)].integer_nb), asm_get_next_line());
-				asm_comment(asm_get_next_line(),"} end of if-else statement");
+				asm_comment(asm_get_next_line(),"} fin if-else ");
 			}
     break;
 
   case 51:
 #line 419 "syntax.y"
     {
-				asm_comment(asm_get_next_line(),"if statement sans else ");
+				asm_comment(asm_get_next_line(),"if condition sans else ");
 			}
     break;
 
@@ -1879,14 +1879,14 @@ yyreduce:
 #line 432 "syntax.y"
     {
 				asm_update_jmp((yyvsp[(1) - (7)].integer_nb), asm_get_next_line());
-				asm_comment(asm_get_next_line(),"} end of if statement");
+				asm_comment(asm_get_next_line(),"} fin if ");
 			}
     break;
 
   case 54:
 #line 441 "syntax.y"
     {
-					asm_comment(asm_get_next_line(),"while statement");
+					asm_comment(asm_get_next_line(),"while condition");
 
 					(yyvsp[(2) - (2)].integer_nb) = asm_get_next_line();
 				}
@@ -1902,7 +1902,7 @@ yyreduce:
 					Symbol *condition = tmp_table_pop();
 
 					(yyvsp[(1) - (5)].integer_nb) = asm_prepare_JMF(condition->address);
-					asm_comment(asm_get_next_line(),"while block {");
+					asm_comment(asm_get_next_line(),"while  {");
 				}
     break;
 
@@ -1911,7 +1911,7 @@ yyreduce:
     {
 					asm_update_jmp((yyvsp[(1) - (7)].integer_nb), asm_get_next_line() + 1);
 					asm_function_JMP((yyvsp[(2) - (7)].integer_nb));
-					asm_comment(asm_get_next_line(),"} end of while statement");
+					asm_comment(asm_get_next_line(),"} fin while ");
 				}
     break;
 
@@ -2139,7 +2139,7 @@ yyreturn:
     
     void expression_To_condition() {
 
-        asm_comment(asm_get_next_line(),"Translate expression to condition");
+        asm_comment(asm_get_next_line(),"expression isTrue ? ");
 
         asm_push_value(0);
         Symbol *zero = tmp_table_pop();
